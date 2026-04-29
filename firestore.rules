@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDoc().data.role == 'admin';
+    }
+
+    function isCoach() {
+      return isSignedIn() && userDoc().data.role == 'coach' && userDoc().data.approved == true;
+    }
+
+    function isAthlete() {
+      return isSignedIn() && userDoc().data.role == 'athlete';
+    }
+
+    function athleteId() {
+      return userDoc().data.athleteId;
+    }
+
+    function planDoc(planId) {
+      return get(/databases/$(database)/documents/trainingPlans/$(planId));
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /coaches/{coachId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == coachId;
+      allow update: if isAdmin() || (isSignedIn() && request.auth.uid == coachId);
+    }
+
+    match /athletes/{athleteId} {
+      allow read: if isAdmin() || isCoach() || (isAthlete() && athleteId() == athleteId);
+      allow create, update: if isCoach() || isAdmin();
+    }
+
+    match /trainingPlans/{planId} {
+      allow read: if isAdmin() || isCoach() || (isAthlete() && athleteId() == resource.data.athleteId);
+      allow create, update: if isCoach() || isAdmin();
+    }
+
+    match /trainings/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /trainingTasks/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /diary/{id} {
+      allow read, write: if isAdmin() || isCoach() || (isSignedIn() && request.auth.uid == resource.data.athleteUserId);
+    }
+
+    match /exercises/{id} {
+      allow read, write: if isAdmin() || isCoach();
+    }
+
+    match /results/{id} {
+      allow create: if isSignedIn() && request.resource.data.athleteUserId == request.auth.uid;
+      allow read: if isAdmin() ||
+        (isSignedIn() && resource.data.athleteUserId == request.auth.uid) ||
+        (isCoach() && planDoc(resource.data.trainingPlanId).data.coachId == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    match /reports/{id} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isCoach();
+    }
+  }
+}
