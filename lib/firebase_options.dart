@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -50,23 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDBZsLZTwTxSeQcxKu6EBeOfy5Z70KKKVs',
-    appId: '1:120164374295:android:4cb1bfaca45cb979cc0952',
-    messagingSenderId: '120164374295',
-    projectId: 'moby-9b804',
-    databaseURL: 'https://moby-9b804-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'moby-9b804.firebasestorage.app',
+    apiKey: 'AIzaSyD7keKbNEYc1juf1eWl3jIOR3asacCXsnQ',
+    appId: '1:279708646624:android:4a4e12061abca92e94e485',
+    messagingSenderId: '279708646624',
+    projectId: 'swim-app-moby',
+    storageBucket: 'swim-app-moby.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC4rBCm0yWznejnaCu7PLpcjcV3_14DnEE',
-    appId: '1:120164374295:ios:1b7006d72e1794dbcc0952',
-    messagingSenderId: '120164374295',
-    projectId: 'moby-9b804',
-    databaseURL: 'https://moby-9b804-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'moby-9b804.firebasestorage.app',
-    iosClientId: '120164374295-6hgh2im37l61osijltsbimhumfsc473h.apps.googleusercontent.com',
-    iosBundleId: 'com.example.swimApp',
+    apiKey: 'AIzaSyAqY4VqCKWIDHo-SqRmoxaa-a3YKx9NeTY',
+    appId: '1:279708646624:ios:a5501c588be91f3794e485',
+    messagingSenderId: '279708646624',
+    projectId: 'swim-app-moby',
+    storageBucket: 'swim-app-moby.firebasestorage.app',
+    iosBundleId: 'com.ti4gan.swimapp.moby',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyACx00P3R_Dbmegbqpj12WARHIM2cmu8WM',
+    appId: '1:279708646624:web:00ba7e58f12149e094e485',
+    messagingSenderId: '279708646624',
+    projectId: 'swim-app-moby',
+    authDomain: 'swim-app-moby.firebaseapp.com',
+    storageBucket: 'swim-app-moby.firebasestorage.app',
+    measurementId: 'G-KSD60NKYND',
   );
 
 }

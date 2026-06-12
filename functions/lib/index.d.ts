@@ -1,4 +1,6 @@
-export declare const notifyCoachOnNewResult: import("firebase-functions/core").CloudFunction<import("firebase-functions/v2/firestore").FirestoreEvent<import("firebase-functions/v2/firestore").QueryDocumentSnapshot | undefined, {
-    resultId: string;
+export { getCoachDocumentDownloadUrls, uploadCoachDocument } from './coach_documents.js';
+export declare const notifyAthleteOnCoachWorkout: import("firebase-functions/core").CloudFunction<import("firebase-functions/v2/firestore").FirestoreEvent<import("firebase-functions/v2/firestore").QueryDocumentSnapshot | undefined, {
+    athleteId: string;
+    workoutId: string;
 }>>;
 //# sourceMappingURL=index.d.ts.map

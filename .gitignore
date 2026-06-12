@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+admin_web/node_modules/
+admin_web/dist/
+admin_web/.env
+functions/.env
+functions/.env.*
+
+tools/node_modules/
+tools/firestore-schema-visualizer/venv/
+tools/firestore-schema-visualizer/firestore_schema_*
+docs/firestore-schema/*.json
+docs/firestore-schema/*.png
+docs/firestore-schema/*.puml
+docs/firestore-schema/*.xmi

@@ -1,0 +1,9 @@
+{
+  "dart.flutterHotReloadOnSave": "always",
+  "dart.flutterHotRestartOnSave": false,
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/build/**": true
+  }
+}

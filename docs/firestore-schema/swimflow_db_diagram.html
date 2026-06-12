@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ER-диаграмма Cloud Firestore — SwimFlow</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #e8f0fe;
+      --sub: #fff8e1;
+      --card: #fff;
+      --border: #8aa0b8;
+      --text: #172331;
+      --muted: #5b6f83;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font: 13px/1.35 "Segoe UI", system-ui, sans-serif;
+    }
+    h1 {
+      margin: 0 0 24px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .section {
+      max-width: 1280px;
+      margin: 0 auto 22px;
+      padding: 16px;
+      border: 1px solid #c5d0dc;
+      background: var(--panel);
+    }
+    .section.sub { background: var(--sub); }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+    .entity {
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .head {
+      padding: 8px 10px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .path {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 11px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    td {
+      padding: 4px 9px;
+      border-bottom: 1px solid #e3e8ee;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child {
+      width: 58%;
+      font-weight: 600;
+    }
+    td:last-child {
+      color: #1e6848;
+      font-family: Consolas, monospace;
+      white-space: nowrap;
+    }
+    @media print {
+      body { background: #fff; padding: 12px; }
+      .entity { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>ER-диаграмма Cloud Firestore — SwimFlow</h1>
+
+  <section class="section">
+    <h2>Корневые коллекции</h2>
+    <div class="grid">
+      <article class="entity">
+        <div class="head">Пользователь<span class="path">users/{uid}</span></div>
+        <table>
+          <tr><td>uid</td><td>string</td></tr>
+          <tr><td>avatarPreset</td><td>string</td></tr>
+          <tr><td>trainingGroup</td><td>string</td></tr>
+          <tr><td>role</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
+          <tr><td>email</td><td>string</td></tr>
+          <tr><td>sportRank</td><td>string</td></tr>
+          <tr><td>city</td><td>string</td></tr>
+          <tr><td>avatarUrl</td><td>string</td></tr>
+          <tr><td>coachId</td><td>string</td></tr>
+          <tr><td>displayName</td><td>string</td></tr>
+          <tr><td>coachVerificationStatus</td><td>string</td></tr>
+          <tr><td>profileComplete</td><td>boolean</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Заявка тренера<span class="path">coach_registration_requests/{uid}</span></div>
+        <table>
+          <tr><td>uid</td><td>string</td></tr>
+          <tr><td>certificateUrls</td><td>array</td></tr>
+          <tr><td>status</td><td>string</td></tr>
+          <tr><td>email</td><td>string</td></tr>
+          <tr><td>displayName</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>reviewedAt</td><td>timestamp</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Упражнение каталога<span class="path">catalog_exercises/{exerciseId}</span></div>
+        <table>
+          <tr><td>exerciseId</td><td>string</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>hint</td><td>string</td></tr>
+          <tr><td>defaultIntensityTier</td><td>number</td></tr>
+          <tr><td>templateType</td><td>string</td></tr>
+          <tr><td>sortOrder</td><td>number</td></tr>
+          <tr><td>title</td><td>string</td></tr>
+          <tr><td>presetIntervalMeters</td><td>number</td></tr>
+          <tr><td>presetReps</td><td>number</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Норматив разряда<span class="path">rank_norms/{rankId}</span></div>
+        <table>
+          <tr><td>rankId</td><td>string</td></tr>
+          <tr><td>entries</td><td>array</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>source</td><td>string</td></tr>
+        </table>
+      </article>
+    </div>
+  </section>
+
+  <section class="section sub">
+    <h2>Подколлекции users/{swimmerUid}</h2>
+    <div class="grid">
+      <article class="entity">
+        <div class="head">Тренировка<span class="path">workouts/{workoutId}</span></div>
+        <table>
+          <tr><td>workoutId</td><td>string</td></tr>
+          <tr><td>swimmerUid</td><td>string</td></tr>
+          <tr><td>recordMeta</td><td>map</td></tr>
+          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>title</td><td>string</td></tr>
+          <tr><td>poolName</td><td>string</td></tr>
+          <tr><td>durationSeconds</td><td>number</td></tr>
+          <tr><td>coachId</td><td>string</td></tr>
+          <tr><td>scheduledAt</td><td>timestamp</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Старт на соревновании<span class="path">competition_swims/{swimId}</span></div>
+        <table>
+          <tr><td>swimId</td><td>string</td></tr>
+          <tr><td>swimmerUid</td><td>string</td></tr>
+          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>timeCentiseconds</td><td>number</td></tr>
+          <tr><td>eventDate</td><td>timestamp</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
+          <tr><td>poolLengthMeters</td><td>number</td></tr>
+          <tr><td>city</td><td>string</td></tr>
+          <tr><td>competitionName</td><td>string</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Цель результата<span class="path">performance_goal/{goalId}</span></div>
+        <table>
+          <tr><td>goalId</td><td>string</td></tr>
+          <tr><td>swimmerUid</td><td>string</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>targetTimeCentiseconds</td><td>number</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>poolLengthMeters</td><td>number</td></tr>
+        </table>
+      </article>
+    </div>
+  </section>
+
+  <section class="section sub">
+    <h2>Подколлекции users/{coachUid}</h2>
+    <div class="grid">
+      <article class="entity">
+        <div class="head">Досье пловца<span class="path">athleteDossiers/{athleteUid}</span></div>
+        <table>
+          <tr><td>athleteUid</td><td>string</td></tr>
+          <tr><td>coachUid</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+          <tr><td>fullName</td><td>string</td></tr>
+          <tr><td>phone</td><td>string</td></tr>
+          <tr><td>birthYear</td><td>number</td></tr>
+          <tr><td>city</td><td>string</td></tr>
+          <tr><td>parentContact</td><td>string</td></tr>
+          <tr><td>notes</td><td>string</td></tr>
+          <tr><td>medicalNotes</td><td>string</td></tr>
+        </table>
+      </article>
+    </div>
+  </section>
+</body>
+</html>

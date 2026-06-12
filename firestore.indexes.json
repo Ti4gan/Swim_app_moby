@@ -1,15 +1,23 @@
 {
   "indexes": [
     {
-      "collectionGroup": "athletes",
+      "collectionGroup": "workouts",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "coachId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        { "fieldPath": "scheduledAt", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "trainingPlans",
+      "collectionGroup": "workouts",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "coachId", "order": "ASCENDING" },
+        { "fieldPath": "scheduledAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "athletes",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "coachId", "order": "ASCENDING" },

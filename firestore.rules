@@ -1,82 +1,196 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
-    }
 
-    function userDoc() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
     }
 
     function isAdmin() {
-      return isSignedIn() && userDoc().data.role == 'admin';
+      return request.auth != null
+        && exists(userPath(request.auth.uid))
+        && get(userPath(request.auth.uid)).data.role == 'admin';
     }
 
-    function isCoach() {
-      return isSignedIn() && userDoc().data.role == 'coach' && userDoc().data.approved == true;
+    function athleteLinkedToCoach(athleteUid) {
+      return exists(userPath(athleteUid))
+        && get(userPath(athleteUid)).data.coachId == request.auth.uid;
     }
 
-    function isAthlete() {
-      return isSignedIn() && userDoc().data.role == 'athlete';
+    function swimmerLinkedToCoach(coachUid) {
+      return exists(userPath(request.auth.uid))
+        && get(userPath(request.auth.uid)).data.coachId == coachUid;
     }
 
-    function athleteId() {
-      return userDoc().data.athleteId;
+    function swimmerCoachLinkPatchOnly() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'coachId',
+        'coachInviteLabel',
+        'presetBirthYear',
+        'presetCity',
+        'presetPhone',
+        'presetNotes',
+        'trainingGroup',
+        'updatedAt',
+      ]);
     }
 
-    function planDoc(planId) {
-      return get(/databases/$(database)/documents/trainingPlans/$(planId));
+    match /coach_invites/{code} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.coachId == request.auth.uid;
+      allow delete: if request.auth != null
+        && resource.data.coachId == request.auth.uid;
+    }
+
+    match /coach_registration_requests/{requestId} {
+      allow read: if request.auth != null && (isAdmin() || request.auth.uid == requestId);
+      allow create: if request.auth != null
+        && requestId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update: if isAdmin()
+        || (
+          request.auth.uid == requestId
+          && resource.data.uid == request.auth.uid
+          && resource.data.status == 'pending'
+          && request.resource.data.status == 'pending'
+        )
+        || (
+          request.auth.uid == requestId
+          && resource.data.uid == request.auth.uid
+          && resource.data.status == 'rejected'
+          && request.resource.data.status == 'rejected'
+        )
+        || (
+          request.auth.uid == requestId
+          && resource.data.uid == request.auth.uid
+          && resource.data.status == 'rejected'
+          && request.resource.data.status == 'pending'
+        );
+      allow delete: if isAdmin();
+    }
+
+    match /catalog_exercises/{exerciseId} {
+      allow get, list: if request.auth != null;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /rank_norms/{rankId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     match /users/{userId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn() && request.auth.uid == userId;
-    }
+      allow read: if request.auth != null && (
+        request.auth.uid == userId
+        || athleteLinkedToCoach(userId)
+        || swimmerLinkedToCoach(userId)
+        || ('coachId' in resource.data && resource.data.coachId == request.auth.uid)
+        || isAdmin()
+      );
 
-    match /coaches/{coachId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.auth.uid == coachId;
-      allow update: if isAdmin() || (isSignedIn() && request.auth.uid == coachId);
-    }
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && (request.resource.data.role == 'swimmer' || request.resource.data.role == 'coach');
 
-    match /athletes/{athleteId} {
-      allow read: if isAdmin() || isCoach() || (isAthlete() && athleteId() == athleteId);
-      allow create, update: if isCoach() || isAdmin();
-    }
+      allow delete: if request.auth != null && request.auth.uid == userId;
 
-    match /trainingPlans/{planId} {
-      allow read: if isAdmin() || isCoach() || (isAthlete() && athleteId() == resource.data.athleteId);
-      allow create, update: if isCoach() || isAdmin();
-    }
+      allow update: if request.auth != null && (
+        isAdmin()
+        || (
+          request.auth.uid == userId
+          && request.resource.data.role == resource.data.role
+          && (
+            request.resource.data.coachId == resource.data.coachId
+            || (!('coachId' in resource.data) && request.resource.data.coachId != null)
+            || (resource.data.coachId == null && request.resource.data.coachId != null)
+            || (
+              swimmerCoachLinkPatchOnly()
+              && request.resource.data.coachId is string
+              && exists(userPath(request.resource.data.coachId))
+              && get(userPath(request.resource.data.coachId)).data.role == 'coach'
+            )
+          )
+        )
+        || (
+          athleteLinkedToCoach(userId)
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.coachId == resource.data.coachId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'trainingGroup',
+            'updatedAt',
+          ])
+        )
+      );
 
-    match /trainings/{id} {
-      allow read, write: if isSignedIn();
-    }
+      match /workouts/{workoutId} {
+        allow read: if request.auth != null && (
+          request.auth.uid == userId
+          || ('coachId' in resource.data && resource.data.coachId == request.auth.uid)
+          || athleteLinkedToCoach(userId)
+          || isAdmin()
+        );
+        allow create: if request.auth != null && (
+          request.auth.uid == userId
+          || (
+            athleteLinkedToCoach(userId)
+            && request.resource.data.coachId == request.auth.uid
+          )
+          || isAdmin()
+        );
+        allow update: if request.auth != null && (
+          request.auth.uid == userId
+          || (
+            athleteLinkedToCoach(userId)
+            && (
+              !('coachId' in resource.data)
+              || resource.data.coachId == request.auth.uid
+            )
+          )
+          || isAdmin()
+        );
+        allow delete: if request.auth != null && (
+          request.auth.uid == userId
+          || isAdmin()
+        );
+      }
 
-    match /trainingTasks/{id} {
-      allow read, write: if isSignedIn();
-    }
+      match /competition_swims/{swimId} {
+        allow read: if request.auth != null && (
+          request.auth.uid == userId
+          || athleteLinkedToCoach(userId)
+          || isAdmin()
+        );
+        allow create, update, delete: if request.auth != null && (
+          request.auth.uid == userId
+          || isAdmin()
+        );
+      }
 
-    match /diary/{id} {
-      allow read, write: if isAdmin() || isCoach() || (isSignedIn() && request.auth.uid == resource.data.athleteUserId);
-    }
+      match /performance_goal/{docId} {
+        allow read: if request.auth != null && (
+          request.auth.uid == userId
+          || athleteLinkedToCoach(userId)
+          || isAdmin()
+        );
+        allow create, update, delete: if request.auth != null && (
+          athleteLinkedToCoach(userId)
+          || isAdmin()
+        );
+      }
 
-    match /exercises/{id} {
-      allow read, write: if isAdmin() || isCoach();
-    }
+      match /athleteDossiers/{athleteUid} {
+        allow read, write: if request.auth != null && (
+          request.auth.uid == userId
+          || isAdmin()
+        );
+      }
 
-    match /results/{id} {
-      allow create: if isSignedIn() && request.resource.data.athleteUserId == request.auth.uid;
-      allow read: if isAdmin() ||
-        (isSignedIn() && resource.data.athleteUserId == request.auth.uid) ||
-        (isCoach() && planDoc(resource.data.trainingPlanId).data.coachId == request.auth.uid);
-      allow update, delete: if isAdmin();
-    }
-
-    match /reports/{id} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin() || isCoach();
+      match /workout_templates/{templateId} {
+        allow get, list: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow create, update, delete: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }

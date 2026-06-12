@@ -1,0 +1,10 @@
+admin@mail.ru / 123456 (администратор)
+coach@mail.ru / 123456 (тренер)
+user1@mail.ru / 123456 (пловец)
+user2@mail.ru / 123456
+user3@mail.ru / 123456
+user4@mail.ru / 123456
+user5@mail.ru / 123456
+user6@mail.ru / 123456
+
+Сброс и заполнение БД: cd tools && npm install && npm run reset-seed

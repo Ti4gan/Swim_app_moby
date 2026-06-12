@@ -1,80 +1,26 @@
 {
   "project_info": {
-    "project_number": "120164374295",
-    "firebase_url": "https://moby-9b804-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "moby-9b804",
-    "storage_bucket": "moby-9b804.firebasestorage.app"
+    "project_number": "279708646624",
+    "project_id": "swim-app-moby",
+    "storage_bucket": "swim-app-moby.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:120164374295:android:1b3a574ea4c13528cc0952",
+        "mobilesdk_app_id": "1:279708646624:android:4a4e12061abca92e94e485",
         "android_client_info": {
-          "package_name": "com.example.project_2sem"
+          "package_name": "com.ti4gan.swim_app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "120164374295-lvueofrs3b6dclumlrj7bslm8c26oa2h.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDBZsLZTwTxSeQcxKu6EBeOfy5Z70KKKVs"
+          "current_key": "AIzaSyD7keKbNEYc1juf1eWl3jIOR3asacCXsnQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "120164374295-lvueofrs3b6dclumlrj7bslm8c26oa2h.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "120164374295-6hgh2im37l61osijltsbimhumfsc473h.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.swimApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:120164374295:android:4cb1bfaca45cb979cc0952",
-        "android_client_info": {
-          "package_name": "com.example.swim_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "120164374295-lvueofrs3b6dclumlrj7bslm8c26oa2h.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDBZsLZTwTxSeQcxKu6EBeOfy5Z70KKKVs"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "120164374295-lvueofrs3b6dclumlrj7bslm8c26oa2h.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "120164374295-6hgh2im37l61osijltsbimhumfsc473h.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.swimApp"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

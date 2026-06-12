@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>120164374295-6hgh2im37l61osijltsbimhumfsc473h.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.120164374295-6hgh2im37l61osijltsbimhumfsc473h</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC4rBCm0yWznejnaCu7PLpcjcV3_14DnEE</string>
+	<string>AIzaSyAqY4VqCKWIDHo-SqRmoxaa-a3YKx9NeTY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>120164374295</string>
+	<string>279708646624</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.swimApp</string>
+	<string>com.ti4gan.swimapp.moby</string>
 	<key>PROJECT_ID</key>
-	<string>moby-9b804</string>
+	<string>swim-app-moby</string>
 	<key>STORAGE_BUCKET</key>
-	<string>moby-9b804.firebasestorage.app</string>
+	<string>swim-app-moby.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:120164374295:ios:1b7006d72e1794dbcc0952</string>
-	<key>DATABASE_URL</key>
-	<string>https://moby-9b804-default-rtdb.europe-west1.firebasedatabase.app</string>
+	<string>1:279708646624:ios:a5501c588be91f3794e485</string>
 </dict>
 </plist>

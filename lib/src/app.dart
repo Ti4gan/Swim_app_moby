@@ -1,24 +1,45 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/router/app_router.dart';
-import 'core/theme/app_theme.dart';
-import 'presentation/providers/auth_providers.dart';
+import 'dart:async';
 
-class SwimApp extends ConsumerWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import 'swimflow/router/stitch_router.dart';
+import 'swimflow/theme/app_theme.dart';
+
+class SwimApp extends ConsumerStatefulWidget {
   const SwimApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    print('=== SwimApp.build START ===');
-    final router = ref.watch(appRouterProvider);
-    print('Router obtained');
-    print('=== SwimApp.build END ===');
+  ConsumerState<SwimApp> createState() => _SwimAppState();
+}
+
+class _SwimAppState extends ConsumerState<SwimApp> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(initializeDateFormatting('ru'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.watch(stitchRouterProvider);
     return MaterialApp.router(
-      title: 'Swim Planner',
+      title: 'SwimFlow',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      theme: StitchAppTheme.light,
+      themeMode: ThemeMode.light,
+      locale: const Locale('ru', 'RU'),
+      supportedLocales: const [
+        Locale('ru', 'RU'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: router,
     );
   }
