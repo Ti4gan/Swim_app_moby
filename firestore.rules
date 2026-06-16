@@ -100,16 +100,21 @@ service cloud.firestore {
         isAdmin()
         || (
           request.auth.uid == userId
-          && request.resource.data.role == resource.data.role
           && (
-            request.resource.data.coachId == resource.data.coachId
-            || (!('coachId' in resource.data) && request.resource.data.coachId != null)
-            || (resource.data.coachId == null && request.resource.data.coachId != null)
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fcmToken', 'fcmTokenUpdatedAt'])
             || (
-              swimmerCoachLinkPatchOnly()
-              && request.resource.data.coachId is string
-              && exists(userPath(request.resource.data.coachId))
-              && get(userPath(request.resource.data.coachId)).data.role == 'coach'
+              request.resource.data.role == resource.data.role
+              && (
+                request.resource.data.coachId == resource.data.coachId
+                || (!('coachId' in resource.data) && request.resource.data.coachId != null)
+                || (resource.data.coachId == null && request.resource.data.coachId != null)
+                || (
+                  swimmerCoachLinkPatchOnly()
+                  && request.resource.data.coachId is string
+                  && exists(userPath(request.resource.data.coachId))
+                  && get(userPath(request.resource.data.coachId)).data.role == 'coach'
+                )
+              )
             )
           )
         )

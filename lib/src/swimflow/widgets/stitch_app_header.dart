@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/app_user_role.dart';
-import '../providers/swimflow_providers.dart';
 import '../providers/swimmer_notifications_providers.dart';
+import '../providers/swimflow_providers.dart';
 import '../theme/tokens.dart';
 import 'profile_avatar.dart';
 import 'stitch_widgets.dart';
@@ -36,30 +35,23 @@ class _HeaderAvatar extends ConsumerWidget {
         return SwimflowProfileAvatar(profile: p, size: _kHeaderAvatar);
       },
       loading: () => _avatarPlaceholder(),
-      error: (_, __) => _avatarPlaceholder(),
+      error: (_, _) => _avatarPlaceholder(),
     );
   }
 }
 
-class _NotificationsHeaderButton extends ConsumerWidget {
-  const _NotificationsHeaderButton();
+class SwimmerNotificationsHeaderButton extends ConsumerWidget {
+  const SwimmerNotificationsHeaderButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(swimflowProfileProvider).valueOrNull;
-    if (profile == null || profile.role != AppUserRole.swimmer) {
-      return const SizedBox(width: 48);
-    }
     final unread = ref.watch(unreadNotificationsCountProvider);
-    return SizedBox(
-      width: 48,
-      child: IconButton(
-        onPressed: () => context.push('/notifications'),
-        icon: Badge(
-          isLabelVisible: unread > 0,
-          label: Text(unread > 9 ? '9+' : '$unread'),
-          child: const Icon(Icons.notifications_outlined, color: StitchColors.primary),
-        ),
+    return IconButton(
+      onPressed: () => context.push('/notifications'),
+      icon: Badge(
+        isLabelVisible: unread > 0,
+        label: Text(unread > 9 ? '9+' : '$unread'),
+        child: const Icon(Icons.notifications_outlined, color: StitchColors.primary),
       ),
     );
   }
@@ -80,7 +72,7 @@ class StitchMainShellHeader extends ConsumerWidget {
             const _HeaderAvatar(),
             const Spacer(),
             const StitchGradientTitle('SwimFlow', fontSize: 20),
-            if (trailing != null) trailing! else const _NotificationsHeaderButton(),
+            trailing ?? const SwimmerNotificationsHeaderButton(),
           ],
         ),
       ),

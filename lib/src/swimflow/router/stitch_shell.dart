@@ -6,7 +6,6 @@ import '../models/app_user_role.dart';
 import '../providers/swimflow_providers.dart';
 import '../screens/session_loading_screen.dart';
 import '../widgets/stitch_widgets.dart';
-import '../widgets/swimflow_notice_overlay.dart';
 
 class StitchShell extends ConsumerWidget {
   const StitchShell({
@@ -36,7 +35,7 @@ class StitchShell extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      body: SwimflowNoticeHost(child: navigationShell),
+      body: navigationShell,
       bottomNavigationBar: StitchBottomNav(
         index: navigationShell.currentIndex,
         onChanged: navigationShell.goBranch,

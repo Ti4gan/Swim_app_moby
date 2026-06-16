@@ -1,34 +1,38 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _prefsKey = 'coach_seen_notification_ids';
+class SeenCoachNotificationIdsNotifier extends StateNotifier<Set<String>> {
+  SeenCoachNotificationIdsNotifier() : super({});
 
-final seenCoachNotificationIdsProvider =
-    AsyncNotifierProvider<SeenCoachNotificationIdsNotifier, Set<String>>(
-  SeenCoachNotificationIdsNotifier.new,
-);
+  static const _key = 'seen_coach_notifications';
 
-class SeenCoachNotificationIdsNotifier extends AsyncNotifier<Set<String>> {
-  @override
-  Future<Set<String>> build() async {
+  Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    return Set<String>.from(prefs.getStringList(_prefsKey) ?? const []);
+    final raw = prefs.getStringList(_key);
+    if (raw != null && raw.isNotEmpty) {
+      state = raw.toSet();
+    }
   }
 
-  Future<void> _persist(Set<String> ids) async {
-    state = AsyncData(ids);
+  Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_prefsKey, ids.toList());
+    await prefs.setStringList(_key, state.toList());
   }
 
-  Future<void> markSeen(String id) async {
-    final current = state.valueOrNull ?? await future;
-    if (current.contains(id)) return;
-    await _persist({...current, id});
+  void markSeen(String id) {
+    state = {...state, id};
+    _persist();
   }
 
-  Future<void> markAllSeen(Iterable<String> ids) async {
-    final current = state.valueOrNull ?? await future;
-    await _persist({...current, ...ids});
+  void markAllSeen(Iterable<String> ids) {
+    state = {...state, ...ids};
+    _persist();
   }
 }
+
+final seenCoachNotificationIdsProvider =
+    StateNotifierProvider<SeenCoachNotificationIdsNotifier, Set<String>>((ref) {
+  final notifier = SeenCoachNotificationIdsNotifier();
+  notifier.load();
+  return notifier;
+});

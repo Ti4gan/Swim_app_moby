@@ -31,7 +31,7 @@ class _StitchNotificationsScreenState extends ConsumerState<StitchNotificationsS
   @override
   Widget build(BuildContext context) {
     final items = ref.watch(swimmerCoachNotificationsProvider);
-    final seen = ref.watch(seenNotificationIdsProvider).valueOrNull ?? {};
+    final seen = ref.watch(seenNotificationIdsProvider);
 
     return Scaffold(
       body: StitchPageScaffold(

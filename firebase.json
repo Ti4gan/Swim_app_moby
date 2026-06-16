@@ -3,24 +3,24 @@
     "platforms": {
       "android": {
         "default": {
-          "projectId": "moby-9b804",
-          "appId": "1:120164374295:android:4cb1bfaca45cb979cc0952",
+          "projectId": "swim-app-moby",
+          "appId": "1:279708646624:android:4a4e12061abca92e94e485",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "dart": {
         "lib/firebase_options.dart": {
-          "projectId": "moby-9b804",
+          "projectId": "swim-app-moby",
           "configurations": {
-            "android": "1:120164374295:android:4cb1bfaca45cb979cc0952",
-            "ios": "1:120164374295:ios:1b7006d72e1794dbcc0952"
+            "android": "1:279708646624:android:4a4e12061abca92e94e485",
+            "ios": "1:279708646624:ios:a5501c588be91f3794e485"
           }
         }
       },
       "ios": {
         "default": {
-          "projectId": "moby-9b804",
-          "appId": "1:120164374295:ios:1b7006d72e1794dbcc0952",
+          "projectId": "swim-app-moby",
+          "appId": "1:279708646624:ios:a5501c588be91f3794e485",
           "uploadDebugSymbols": false,
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }

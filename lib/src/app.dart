@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'swimflow/providers/push_notification_providers.dart';
 import 'swimflow/router/stitch_router.dart';
 import 'swimflow/theme/app_theme.dart';
 
@@ -24,6 +25,7 @@ class _SwimAppState extends ConsumerState<SwimApp> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(pushNotificationsBindingProvider);
     final router = ref.watch(stitchRouterProvider);
     return MaterialApp.router(
       title: 'SwimFlow',

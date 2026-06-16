@@ -59,7 +59,7 @@ class CoachNotification {
   }) {
     final stroke = competitionStrokeLabelsRu[swim.strokeKey] ?? swim.strokeKey;
     final name = swim.competitionName?.trim();
-    final date = swim.eventDate;
+    final dateStr = DateFormat('d MMMM', 'ru').format(swim.eventDate);
     return CoachNotification(
       id: 'competition:${athleteUid}:${swim.id}',
       type: CoachNotificationType.competition,
@@ -68,8 +68,8 @@ class CoachNotification {
       title: 'Результат соревнования',
       detail: athleteName,
       subtitle:
-          '${swim.distanceMeters} м $stroke${name != null && name.isNotEmpty ? ' · $name' : ''} · ${DateFormat('d MMMM, HH:mm', 'ru').format(date)}',
-      at: date,
+          '${swim.distanceMeters} м $stroke${name != null && name.isNotEmpty ? ' · $name' : ''} · $dateStr',
+      at: swim.createdAt,
     );
   }
 
@@ -83,6 +83,5 @@ class CoachNotification {
 bool isSwimmerWellbeingNotification(SwimflowWorkout w) {
   final meta = w.recordMeta;
   if (meta == null) return false;
-  if (meta['enteredByCoach'] == true) return false;
-  return swimmerWellbeingReported(meta);
+  return meta['wellbeingSaved'] == true;
 }

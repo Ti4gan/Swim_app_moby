@@ -100,6 +100,7 @@ class _StitchCompetitionSwimFormScreenState extends ConsumerState<StitchCompetit
       final swim = CompetitionSwim(
         id: '',
         eventDate: eventDay,
+        createdAt: DateTime.now(),
         distanceMeters: _distanceMeters,
         strokeKey: _strokeKey,
         timeCentiseconds: cs,

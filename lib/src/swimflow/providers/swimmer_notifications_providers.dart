@@ -15,6 +15,6 @@ final swimmerCoachNotificationsProvider = Provider<List<SwimmerNotification>>((r
 
 final unreadNotificationsCountProvider = Provider<int>((ref) {
   final items = ref.watch(swimmerCoachNotificationsProvider);
-  final seen = ref.watch(seenNotificationIdsProvider).valueOrNull ?? {};
+  final seen = ref.watch(seenNotificationIdsProvider);
   return items.where((n) => !seen.contains(n.workoutId)).length;
 });

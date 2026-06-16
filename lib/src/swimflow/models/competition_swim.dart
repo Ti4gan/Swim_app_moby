@@ -4,6 +4,7 @@ class CompetitionSwim {
   const CompetitionSwim({
     required this.id,
     required this.eventDate,
+    required this.createdAt,
     required this.distanceMeters,
     required this.strokeKey,
     required this.timeCentiseconds,
@@ -14,6 +15,7 @@ class CompetitionSwim {
 
   final String id;
   final DateTime eventDate;
+  final DateTime createdAt;
   final int distanceMeters;
   final String strokeKey;
   final int timeCentiseconds;
@@ -30,9 +32,12 @@ class CompetitionSwim {
     } else {
       eventDate = DateTime.fromMillisecondsSinceEpoch(0);
     }
+    final ca = m['createdAt'];
+    final createdAt = ca is Timestamp ? ca.toDate() : DateTime.now();
     return CompetitionSwim(
       id: d.id,
       eventDate: eventDate,
+      createdAt: createdAt,
       distanceMeters: (m['distanceMeters'] as num?)?.toInt() ?? 0,
       strokeKey: m['strokeKey'] as String? ?? 'free',
       timeCentiseconds: (m['timeCentiseconds'] as num?)?.toInt() ?? 0,

@@ -50,6 +50,6 @@ final coachNotificationsProvider = Provider<List<CoachNotification>>((ref) {
 
 final unreadCoachNotificationsCountProvider = Provider<int>((ref) {
   final items = ref.watch(coachNotificationsProvider);
-  final seen = ref.watch(seenCoachNotificationIdsProvider).valueOrNull ?? {};
+  final seen = ref.watch(seenCoachNotificationIdsProvider);
   return items.where((n) => !seen.contains(n.id)).length;
 });
