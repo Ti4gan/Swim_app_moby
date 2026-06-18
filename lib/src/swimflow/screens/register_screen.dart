@@ -73,7 +73,7 @@ class _StitchRegisterScreenState extends ConsumerState<StitchRegisterScreen> {
     UserCredential? cred;
     SwimflowRepository? repo;
 
-    Future<void> discardIncompleteAccount() async {
+    Future<void> discardIncomplete() async {
       try {
         await repo?.deleteOwnUserProfile();
       } catch (_) {}
@@ -82,24 +82,17 @@ class _StitchRegisterScreenState extends ConsumerState<StitchRegisterScreen> {
       } catch (_) {}
     }
 
-    String inviteErrorRu(FormatException e) {
-      return switch (e.message) {
-        'invite_not_found' => 'Код приглашения не найден',
-        _ => 'Ошибка кода приглашения',
-      };
-    }
-
+    final email = _email.text.trim().toLowerCase();
+    final db = ref.read(firestoreProvider);
     try {
       final auth = ref.read(firebaseAuthProvider);
-      await auth.signOut();
-      final email = _email.text.trim().toLowerCase();
       cred = await auth.createUserWithEmailAndPassword(
         email: email,
         password: _password.text,
       );
       final uid = cred.user?.uid;
       if (uid == null) throw StateError('no_uid');
-      repo = SwimflowRepository(ref.read(firestoreProvider), uid);
+      repo = SwimflowRepository(db, uid);
       if (_roleSeg == AppUserRole.coach) {
         await repo.upsertCoachProfile(
           email: email,
@@ -117,29 +110,12 @@ class _StitchRegisterScreenState extends ConsumerState<StitchRegisterScreen> {
         );
         try {
           await repo.redeemInviteCode(code);
-        } on FormatException catch (e) {
-          if (!mounted) return;
-          context.go('/home');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${inviteErrorRu(e)}. Аккаунт создан — укажите код тренера в настройках.',
-              ),
-              duration: const Duration(seconds: 6),
-            ),
-          );
-          return;
-        } on FirebaseException catch (e) {
-          if (!mounted) return;
-          context.go('/home');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${firestoreErrorMessageRu(e)}. Аккаунт создан — повторите код в настройках.',
-              ),
-              duration: const Duration(seconds: 6),
-            ),
-          );
+        } catch (_) {
+          await discardIncomplete();
+          if (mounted) setState(() {
+            _error = 'Код недействителен';
+            _loading = false;
+          });
           return;
         }
       }
@@ -152,19 +128,13 @@ class _StitchRegisterScreenState extends ConsumerState<StitchRegisterScreen> {
         context.go('/home');
       }
     } on FirebaseAuthException catch (e) {
+      await discardIncomplete();
       if (mounted) setState(() => _error = authErrorMessageRu(e));
     } on FirebaseException catch (e) {
-      if (cred?.user != null) {
-        if (!mounted) return;
-        setState(() => _error = firestoreErrorMessageRu(e));
-      } else {
-        await discardIncompleteAccount();
-        if (mounted) setState(() => _error = firestoreErrorMessageRu(e));
-      }
+      await discardIncomplete();
+      if (mounted) setState(() => _error = firestoreErrorMessageRu(e));
     } catch (e) {
-      if (cred?.user == null) {
-        await discardIncompleteAccount();
-      }
+      await discardIncomplete();
       if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _loading = false);

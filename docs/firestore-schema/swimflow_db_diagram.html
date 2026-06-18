@@ -82,6 +82,7 @@
       font-family: Consolas, monospace;
       white-space: nowrap;
     }
+    .nested { color: #7f8c8d; font-style: italic; }
     @media print {
       body { background: #fff; padding: 12px; }
       .entity { break-inside: avoid; }
@@ -98,19 +99,32 @@
         <div class="head">Пользователь<span class="path">users/{uid}</span></div>
         <table>
           <tr><td>uid</td><td>string</td></tr>
+          <tr><td>email</td><td>string</td></tr>
+          <tr><td>displayName</td><td>string</td></tr>
+          <tr><td>role</td><td>string</td></tr>
+          <tr><td>city</td><td>string</td></tr>
+          <tr><td>sportRank</td><td>string</td></tr>
+          <tr><td>avatarUrl</td><td>string</td></tr>
           <tr><td>avatarPreset</td><td>string</td></tr>
           <tr><td>trainingGroup</td><td>string</td></tr>
-          <tr><td>role</td><td>string</td></tr>
-          <tr><td>updatedAt</td><td>timestamp</td></tr>
-          <tr><td>createdAt</td><td>timestamp</td></tr>
-          <tr><td>email</td><td>string</td></tr>
-          <tr><td>sportRank</td><td>string</td></tr>
-          <tr><td>city</td><td>string</td></tr>
-          <tr><td>avatarUrl</td><td>string</td></tr>
           <tr><td>coachId</td><td>string</td></tr>
-          <tr><td>displayName</td><td>string</td></tr>
+          <tr><td>linkedCoachDisplayName</td><td>string</td></tr>
+          <tr><td>coachInviteLabel</td><td>string</td></tr>
           <tr><td>coachVerificationStatus</td><td>string</td></tr>
           <tr><td>profileComplete</td><td>boolean</td></tr>
+          <tr><td>fcmToken</td><td>string</td></tr>
+          <tr><td>fcmTokenUpdatedAt</td><td>timestamp</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Код приглашения<span class="path">coach_invites/{code}</span></div>
+        <table>
+          <tr><td>code</td><td>string</td></tr>
+          <tr><td>coachId</td><td>string</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
         </table>
       </article>
 
@@ -118,13 +132,13 @@
         <div class="head">Заявка тренера<span class="path">coach_registration_requests/{uid}</span></div>
         <table>
           <tr><td>uid</td><td>string</td></tr>
-          <tr><td>certificateUrls</td><td>array</td></tr>
-          <tr><td>status</td><td>string</td></tr>
           <tr><td>email</td><td>string</td></tr>
           <tr><td>displayName</td><td>string</td></tr>
+          <tr><td>certificateUrls</td><td>array</td></tr>
+          <tr><td>status</td><td>string</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
           <tr><td>updatedAt</td><td>timestamp</td></tr>
           <tr><td>reviewedAt</td><td>timestamp</td></tr>
-          <tr><td>createdAt</td><td>timestamp</td></tr>
         </table>
       </article>
 
@@ -132,15 +146,15 @@
         <div class="head">Упражнение каталога<span class="path">catalog_exercises/{exerciseId}</span></div>
         <table>
           <tr><td>exerciseId</td><td>string</td></tr>
-          <tr><td>strokeKey</td><td>string</td></tr>
-          <tr><td>updatedAt</td><td>timestamp</td></tr>
-          <tr><td>hint</td><td>string</td></tr>
-          <tr><td>defaultIntensityTier</td><td>number</td></tr>
-          <tr><td>templateType</td><td>string</td></tr>
-          <tr><td>sortOrder</td><td>number</td></tr>
           <tr><td>title</td><td>string</td></tr>
-          <tr><td>presetIntervalMeters</td><td>number</td></tr>
+          <tr><td>hint</td><td>string</td></tr>
           <tr><td>presetReps</td><td>number</td></tr>
+          <tr><td>presetIntervalMeters</td><td>number</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>templateType</td><td>string</td></tr>
+          <tr><td>defaultIntensityTier</td><td>number</td></tr>
+          <tr><td>sortOrder</td><td>number</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
         </table>
       </article>
 
@@ -149,28 +163,34 @@
         <table>
           <tr><td>rankId</td><td>string</td></tr>
           <tr><td>entries</td><td>array</td></tr>
-          <tr><td>updatedAt</td><td>timestamp</td></tr>
           <tr><td>source</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
         </table>
       </article>
     </div>
   </section>
 
   <section class="section sub">
-    <h2>Подколлекции users/{swimmerUid}</h2>
+    <h2>Подколлекции users/{ownerUid}</h2>
     <div class="grid">
       <article class="entity">
         <div class="head">Тренировка<span class="path">workouts/{workoutId}</span></div>
         <table>
           <tr><td>workoutId</td><td>string</td></tr>
-          <tr><td>swimmerUid</td><td>string</td></tr>
-          <tr><td>recordMeta</td><td>map</td></tr>
-          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>ownerUid</td><td>string</td></tr>
           <tr><td>title</td><td>string</td></tr>
-          <tr><td>poolName</td><td>string</td></tr>
-          <tr><td>durationSeconds</td><td>number</td></tr>
-          <tr><td>coachId</td><td>string</td></tr>
           <tr><td>scheduledAt</td><td>timestamp</td></tr>
+          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>durationSeconds</td><td>number</td></tr>
+          <tr><td>poolName</td><td>string</td></tr>
+          <tr><td>coachId</td><td>string</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.sets[]</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.mood</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.fatigue</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.physicalState</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.wellbeingSaved</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.wellbeingSavedAt</td></tr>
+          <tr><td colspan="2" class="nested">recordMeta.enteredByCoach</td></tr>
         </table>
       </article>
 
@@ -178,15 +198,15 @@
         <div class="head">Старт на соревновании<span class="path">competition_swims/{swimId}</span></div>
         <table>
           <tr><td>swimId</td><td>string</td></tr>
-          <tr><td>swimmerUid</td><td>string</td></tr>
+          <tr><td>ownerUid</td><td>string</td></tr>
+          <tr><td>eventDate</td><td>timestamp</td></tr>
           <tr><td>distanceMeters</td><td>number</td></tr>
           <tr><td>strokeKey</td><td>string</td></tr>
           <tr><td>timeCentiseconds</td><td>number</td></tr>
-          <tr><td>eventDate</td><td>timestamp</td></tr>
-          <tr><td>createdAt</td><td>timestamp</td></tr>
           <tr><td>poolLengthMeters</td><td>number</td></tr>
           <tr><td>city</td><td>string</td></tr>
           <tr><td>competitionName</td><td>string</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
         </table>
       </article>
 
@@ -194,12 +214,36 @@
         <div class="head">Цель результата<span class="path">performance_goal/{goalId}</span></div>
         <table>
           <tr><td>goalId</td><td>string</td></tr>
-          <tr><td>swimmerUid</td><td>string</td></tr>
+          <tr><td>ownerUid</td><td>string</td></tr>
           <tr><td>strokeKey</td><td>string</td></tr>
           <tr><td>distanceMeters</td><td>number</td></tr>
-          <tr><td>targetTimeCentiseconds</td><td>number</td></tr>
-          <tr><td>updatedAt</td><td>timestamp</td></tr>
           <tr><td>poolLengthMeters</td><td>number</td></tr>
+          <tr><td>targetTimeCentiseconds</td><td>number</td></tr>
+          <tr><td>coachId</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Анализ прогресса<span class="path">training_analysis/{analysisId}</span></div>
+        <table>
+          <tr><td>analysisId</td><td>string</td></tr>
+          <tr><td>ownerUid</td><td>string</td></tr>
+          <tr><td>athleteId</td><td>string</td></tr>
+          <tr><td>previousCompetitionId</td><td>string</td></tr>
+          <tr><td>currentCompetitionId</td><td>string</td></tr>
+          <tr><td>previousResultCentiseconds</td><td>number</td></tr>
+          <tr><td>currentResultCentiseconds</td><td>number</td></tr>
+          <tr><td>distanceMeters</td><td>number</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>workoutsCount</td><td>number</td></tr>
+          <tr><td>improvementInSeconds</td><td>number</td></tr>
+          <tr><td>progressPercent</td><td>number</td></tr>
+          <tr><td>averageWorkoutEfficiency</td><td>number</td></tr>
+          <tr><td>efficiencyLevel</td><td>string</td></tr>
+          <tr><td>startDate</td><td>timestamp</td></tr>
+          <tr><td>endDate</td><td>timestamp</td></tr>
+          <tr><td>createdAt</td><td>timestamp</td></tr>
         </table>
       </article>
     </div>
@@ -213,14 +257,31 @@
         <table>
           <tr><td>athleteUid</td><td>string</td></tr>
           <tr><td>coachUid</td><td>string</td></tr>
-          <tr><td>updatedAt</td><td>timestamp</td></tr>
           <tr><td>fullName</td><td>string</td></tr>
-          <tr><td>phone</td><td>string</td></tr>
           <tr><td>birthYear</td><td>number</td></tr>
+          <tr><td>phone</td><td>string</td></tr>
           <tr><td>city</td><td>string</td></tr>
-          <tr><td>parentContact</td><td>string</td></tr>
           <tr><td>notes</td><td>string</td></tr>
           <tr><td>medicalNotes</td><td>string</td></tr>
+          <tr><td>parentContact</td><td>string</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
+        </table>
+      </article>
+
+      <article class="entity">
+        <div class="head">Шаблон тренировки<span class="path">workout_templates/{templateId}</span></div>
+        <table>
+          <tr><td>templateId</td><td>string</td></tr>
+          <tr><td>coachUid</td><td>string</td></tr>
+          <tr><td>title</td><td>string</td></tr>
+          <tr><td>hint</td><td>string</td></tr>
+          <tr><td>presetReps</td><td>number</td></tr>
+          <tr><td>presetIntervalMeters</td><td>number</td></tr>
+          <tr><td>strokeKey</td><td>string</td></tr>
+          <tr><td>templateType</td><td>string</td></tr>
+          <tr><td>defaultIntensityTier</td><td>number</td></tr>
+          <tr><td>sortOrder</td><td>number</td></tr>
+          <tr><td>updatedAt</td><td>timestamp</td></tr>
         </table>
       </article>
     </div>

@@ -11,6 +11,7 @@ import '../models/coach_athlete_dossier.dart';
 import '../models/linked_athlete.dart';
 import '../models/competition_swim.dart';
 import '../models/performance_goal.dart';
+import '../models/rank_norm_entry.dart';
 import '../logic/workout_stats.dart';
 import '../models/swimflow_profile.dart';
 import '../models/swimflow_workout.dart';
@@ -164,6 +165,15 @@ final coachAthleteWorkoutsFamily = StreamProvider.family<List<SwimflowWorkout>, 
   return repo.watchAthleteWorkouts(athleteUid);
 });
 
+final coachAthleteWorkoutsAllFamily =
+    StreamProvider.family<List<SwimflowWorkout>, String>((ref, athleteUid) {
+  final repo = ref.watch(coachRepositoryProvider);
+  if (repo == null) {
+    return Stream.value([]);
+  }
+  return repo.watchAthleteWorkoutsAll(athleteUid);
+});
+
 final coachAthleteCompetitionSwimsFamily =
     StreamProvider.family<List<CompetitionSwim>, String>((ref, athleteUid) {
   final repo = ref.watch(coachRepositoryProvider);
@@ -228,4 +238,53 @@ final athleteCompetitionSwimsFamily = StreamProvider.family<List<CompetitionSwim
   }
   final coachRepo = ref.watch(coachRepositoryProvider);
   return coachRepo?.watchAthleteCompetitionSwims(athleteUid) ?? Stream.value([]);
+});
+
+final rankNormsProvider = FutureProvider<Map<String, List<RankNormEntry>>>((ref) async {
+  final db = ref.watch(firestoreProvider);
+  final snap = await db.collection(FirestoreCollections.rankNorms).get();
+  print('[RANK] rank_norms docs count: ${snap.docs.length}');
+  final result = <String, List<RankNormEntry>>{};
+  for (final doc in snap.docs) {
+    final data = doc.data();
+    print('[RANK] doc keys: ${data.keys.join(', ')}');
+    final rankId = data['rankId'] as String?;
+    if (rankId == null) {
+      print('[RANK] doc ${doc.id} has no rankId field, trying doc id as rankId');
+    }
+    final id = rankId ?? doc.id;
+    final rawEntries = data['entries'];
+    print('[RANK] doc=$id entries type=${rawEntries.runtimeType}');
+    if (rawEntries is List) {
+      if (rawEntries.isNotEmpty && rawEntries.first is Map) {
+        print('[RANK] first entry keys: ${(rawEntries.first as Map).keys.join(', ')}');
+        print('[RANK] first entry values: ${(rawEntries.first as Map).values.map((v) => '$v (${v.runtimeType})').join(', ')}');
+      }
+      result[id] = rawEntries
+          .map((e) => e is Map<String, dynamic> ? RankNormEntry.fromMap(e) : null)
+          .whereType<RankNormEntry>()
+          .toList();
+      print('[RANK] doc=$id parsed ${result[id]!.length} entries');
+    } else if (rawEntries is Map) {
+      // entries as map: "50_free" -> 2380
+      result[id] = (rawEntries as Map<String, dynamic>).entries
+          .where((e) => e.value is num)
+          .map((e) {
+        final parts = e.key.split('_');
+        final distance = int.tryParse(parts[0]) ?? 0;
+        final stroke = parts.length > 1 ? parts[1] : '';
+        return RankNormEntry(
+          distanceMeters: distance,
+          strokeKey: stroke,
+          timeCentiseconds: (e.value as num).toInt(),
+        );
+      }).toList();
+      print('[RANK] doc=$id parsed ${result[id]!.length} entries from map');
+    } else {
+      print('[RANK] doc=$id entries is unexpected type: ${rawEntries.runtimeType}');
+    }
+    print('[RANK] doc=$id first few: ${result[id]?.take(3).map((e) => '${e.distanceMeters}m ${e.strokeKey} ${e.timeCentiseconds}cs').join(', ')}');
+  }
+  print('[RANK] total ranks loaded: ${result.keys.length}');
+  return result;
 });

@@ -35,6 +35,7 @@ class _CoachAthleteDetailScreenState extends ConsumerState<CoachAthleteDetailScr
   late int _view = widget.initialView.clamp(0, 4);
   DateTime _calendarSelectedDay = DateTime.now();
   bool _dossierSeeded = false;
+  String? _period;
   final _dFullName = TextEditingController();
   final _dBirth = TextEditingController();
   final _dPhone = TextEditingController();
@@ -100,8 +101,42 @@ class _CoachAthleteDetailScreenState extends ConsumerState<CoachAthleteDetailScr
 
   Widget _buildList(List<SwimflowWorkout> list, LinkedAthlete? athlete) {
     final theme = WorkoutListCardTheme.coach(context);
-    final weekM = weekTotalMeters(list);
-    if (list.isEmpty) {
+    final now = DateTime.now();
+    final filtered = _period == null || _period!.isEmpty
+        ? list
+        : list.where((w) {
+            final d = w.scheduledAt;
+            switch (_period!) {
+              case 'day':
+                return d.year == now.year && d.month == now.month && d.day == now.day;
+              case 'week':
+                final start = now.subtract(Duration(days: now.weekday - 1));
+                final end = start.add(const Duration(days: 7));
+                return !d.isBefore(start) && d.isBefore(end);
+              case 'month':
+                return d.year == now.year && d.month == now.month;
+              default:
+                return true;
+            }
+          }).toList();
+    final weekM = weekTotalMeters(filtered);
+
+    Widget filterBar() => Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          _filterChip('День', 'day'),
+          const SizedBox(width: 8),
+          _filterChip('Неделя', 'week'),
+          const SizedBox(width: 8),
+          _filterChip('Месяц', 'month'),
+          const SizedBox(width: 8),
+          _filterChip('Все', ''),
+        ],
+      ),
+    );
+
+    if (filtered.isEmpty) {
       return SwimflowRefreshableScroll(
         color: CoachColors.primaryContainer,
         onRefresh: () => refreshCoachAthleteDetail(ref, widget.athleteId),
@@ -109,6 +144,7 @@ class _CoachAthleteDetailScreenState extends ConsumerState<CoachAthleteDetailScr
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
           children: [
+          filterBar(),
           SwimflowWorkoutListWeekSummary(weekMeters: weekM, theme: theme),
           const SizedBox(height: 32),
           Center(
@@ -129,15 +165,18 @@ class _CoachAthleteDetailScreenState extends ConsumerState<CoachAthleteDetailScr
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-        itemCount: list.length + 1,
+        itemCount: filtered.length + 2,
       itemBuilder: (context, i) {
         if (i == 0) {
+          return filterBar();
+        }
+        if (i == 1) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: SwimflowWorkoutListWeekSummary(weekMeters: weekM, theme: theme),
           );
         }
-        final w = list[i - 1];
+        final w = filtered[i - 2];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: SwimflowWorkoutListCard(
@@ -148,6 +187,31 @@ class _CoachAthleteDetailScreenState extends ConsumerState<CoachAthleteDetailScr
           ),
         );
       },
+      ),
+    );
+  }
+
+  Widget _filterChip(String label, String period) {
+    final selected = _period == period;
+    return GestureDetector(
+      onTap: () => setState(() => _period = period),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? CoachColors.primaryContainer : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? CoachColors.primaryContainer : CoachColors.outlineVariant,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : CoachColors.onSurfaceVariant,
+          ),
+        ),
       ),
     );
   }

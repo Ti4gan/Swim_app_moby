@@ -1,4 +1,12 @@
 abstract final class SwimflowSportRank {
+  static String formatSeconds(double totalSeconds) {
+    if (totalSeconds < 60) {
+      return totalSeconds.toStringAsFixed(2);
+    }
+    final minutes = totalSeconds ~/ 60;
+    final secs = (totalSeconds - minutes * 60).toStringAsFixed(2).padLeft(5, '0');
+    return '$minutes.$secs';
+  }
   static const masterOfSport = 'master_of_sport';
   static const candidateMaster = 'candidate_master';
   static const firstAdult = 'first_adult';

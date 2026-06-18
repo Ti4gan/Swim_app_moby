@@ -41,7 +41,7 @@ bool _swimmerTabPath(String loc) {
 }
 
 String? _sessionLoadingRedirect(String loc) {
-  if (loc == '/session-loading') return null;
+  if (loc == '/session-loading' || loc == '/register') return null;
   return '/session-loading';
 }
 
@@ -114,10 +114,9 @@ final stitchRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
+      if (loc == '/register') return null;
       if (loc.startsWith('/coach/')) return '/home';
-      if (loc == '/login' ||
-          loc == '/register' ||
-          loc == '/session-loading') {
+      if (loc == '/login' || loc == '/session-loading') {
         return '/home';
       }
       if (loc == '/record') return '/home';

@@ -9,6 +9,7 @@ import '../models/coach_athlete_dossier.dart';
 import '../models/competition_swim.dart';
 import '../models/performance_goal.dart';
 import '../models/linked_athlete.dart';
+import '../models/rank_norm_entry.dart';
 import '../logic/workout_stats.dart';
 import '../models/swimflow_workout.dart';
 import '../models/swimflow_workout_title.dart';
@@ -414,5 +415,20 @@ class CoachRepository {
       poolLengthMeters: poolLengthMeters,
     );
     await FirestoreCollections.userPerformanceGoalDoc(_db, athleteUid, docId).delete();
+  }
+
+  Future<Map<String, List<RankNormEntry>>> fetchRankNorms() async {
+    final snap = await _db.collection(FirestoreCollections.rankNorms).get();
+    final result = <String, List<RankNormEntry>>{};
+    for (final doc in snap.docs) {
+      final data = doc.data();
+      final rankId = data['rankId'] as String?;
+      if (rankId == null) continue;
+      final raw = data['entries'] as List<dynamic>? ?? [];
+      result[rankId] = raw
+          .map((e) => RankNormEntry.fromMap(e as Map<String, dynamic>))
+          .toList();
+    }
+    return result;
   }
 }

@@ -306,9 +306,35 @@ button.ghost.sm-ed-cat.active {
   font-size: 13px;
 }
 
+.requests-table th,
+.requests-table td {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.requests-table th:nth-child(1),
+.requests-table td:nth-child(1) {
+  width: 28%;
+}
+
 .requests-table th:nth-child(2),
 .requests-table td:nth-child(2) {
   width: 64px;
+}
+
+.requests-table th:nth-child(3),
+.requests-table td:nth-child(3) {
+  width: 38%;
+  word-break: break-all;
+}
+
+.requests-table th:nth-child(4),
+.requests-table td:nth-child(4) {
+  width: 140px;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .norms-list {

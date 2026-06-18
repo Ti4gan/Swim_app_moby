@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/firestore_messages.dart';
 import '../models/app_user_role.dart';
+import '../models/swimflow_sport_rank.dart';
 import '../providers/swimflow_providers.dart';
 import '../theme/tokens.dart';
 import '../widgets/profile_avatar.dart';
@@ -33,6 +34,8 @@ class _StitchSettingsScreenState extends ConsumerState<StitchSettingsScreen> {
   bool _avatarBusy = false;
   bool _changingCoach = false;
   bool _coachNameSynced = false;
+  bool _rankSeeded = false;
+  String? _rank;
   String? _error;
   String? _coachChangeErr;
   String? _coachChangeOk;
@@ -99,7 +102,7 @@ class _StitchSettingsScreenState extends ConsumerState<StitchSettingsScreen> {
     try {
       await repo.updateProfileDetails(
         displayName: p.displayName,
-        sportRank: p.sportRankId,
+        sportRank: _rank ?? p.sportRankId,
         city: p.city,
         avatarUrl: '',
         avatarPreset: presetId ?? '',
@@ -127,7 +130,7 @@ class _StitchSettingsScreenState extends ConsumerState<StitchSettingsScreen> {
     try {
       await repo.updateProfileDetails(
         displayName: name,
-        sportRank: p.sportRankId,
+        sportRank: _rank ?? p.sportRankId,
         city: p.city,
       );
       if (mounted) context.pop();
@@ -144,6 +147,10 @@ class _StitchSettingsScreenState extends ConsumerState<StitchSettingsScreen> {
     if (p != null && !_seeded) {
       _seeded = true;
       _name.text = p.displayName;
+    }
+    if (p != null && !_rankSeeded && p.sportRankId.isNotEmpty) {
+      _rankSeeded = true;
+      _rank = p.sportRankId;
     }
     if (!_coachNameSynced &&
         p?.role == AppUserRole.swimmer &&
@@ -265,6 +272,38 @@ class _StitchSettingsScreenState extends ConsumerState<StitchSettingsScreen> {
                       ],
                     ),
                   ),
+                  if (p?.role == AppUserRole.swimmer) ...[
+                    const SizedBox(height: 16),
+                    StitchGlassCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.emoji_events_rounded, color: StitchColors.primary, size: 22),
+                              const SizedBox(width: 8),
+                              Text('Разряд', style: Theme.of(context).textTheme.titleMedium),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<String>(
+                            initialValue: _rank,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            ),
+                            items: SwimflowSportRank.orderedIds.map((id) {
+                              return DropdownMenuItem(
+                                value: id,
+                                child: Text(SwimflowSportRank.labelRu(id)),
+                              );
+                            }).toList(),
+                            onChanged: (v) => setState(() => _rank = v),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   if (p?.role == AppUserRole.swimmer && p?.coachId != null) ...[
                     StitchGlassCard(

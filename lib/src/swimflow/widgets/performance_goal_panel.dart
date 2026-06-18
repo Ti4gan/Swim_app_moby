@@ -19,12 +19,16 @@ class PerformanceGoalPanel extends ConsumerStatefulWidget {
     super.key,
     this.useCoachTheme = false,
     this.embedded = false,
+    this.externalGoalId,
+    this.onGoalChanged,
   });
 
   final String athleteUid;
   final bool coachMode;
   final bool useCoachTheme;
   final bool embedded;
+  final String? externalGoalId;
+  final ValueChanged<String?>? onGoalChanged;
 
   @override
   ConsumerState<PerformanceGoalPanel> createState() => _PerformanceGoalPanelState();
@@ -48,13 +52,16 @@ class _PerformanceGoalPanelState extends ConsumerState<PerformanceGoalPanel> {
     return formatTimeCentiseconds(centiseconds);
   }
 
+  String? get _goalId => widget.externalGoalId ?? _selectedGoalId;
+
   PerformanceGoal? _pickSelected(List<PerformanceGoal> goals) {
     if (goals.isEmpty) return null;
-    final hit = goals.where((g) => g.id == _selectedGoalId).firstOrNull;
+    final hit = goals.where((g) => g.id == _goalId).firstOrNull;
     return hit ?? goals.first;
   }
 
   void _syncSelection(List<PerformanceGoal> goals) {
+    if (widget.externalGoalId != null) return;
     if (goals.isEmpty) {
       _selectedGoalId = null;
       return;
@@ -63,6 +70,14 @@ class _PerformanceGoalPanelState extends ConsumerState<PerformanceGoalPanel> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) setState(() => _selectedGoalId = goals.first.id);
       });
+    }
+  }
+
+  void _selectGoal(String id) {
+    if (widget.onGoalChanged != null) {
+      widget.onGoalChanged!(id);
+    } else {
+      setState(() => _selectedGoalId = id);
     }
   }
 
@@ -76,7 +91,7 @@ class _PerformanceGoalPanelState extends ConsumerState<PerformanceGoalPanel> {
       editGoal: editGoal,
     );
     if (ok == true && mounted && editGoal != null) {
-      setState(() => _selectedGoalId = editGoal.id);
+      _selectGoal(editGoal.id);
     }
   }
 
@@ -105,7 +120,7 @@ class _PerformanceGoalPanelState extends ConsumerState<PerformanceGoalPanel> {
               label: _goalLabel(g),
               selected: g.id == selected.id,
               coachStyle: widget.useCoachTheme,
-              onTap: () => setState(() => _selectedGoalId = g.id),
+              onTap: () => _selectGoal(g.id),
             ),
             if (g != goals.last) const SizedBox(height: 8),
           ],

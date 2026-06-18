@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:swim_app/dev/seed_swimflow_demo.dart';
+import 'package:swim_app/dev/seed_full_reset.dart';
 import 'package:swim_app/firebase_options.dart';
 
 void main() async {
@@ -28,16 +28,16 @@ class _SeedAppState extends State<_SeedApp> {
   }
 
   Future<void> _run() async {
-    setState(() => _line = 'Сидирование…');
+    setState(() => _line = 'Запуск полной перезагрузки БД…');
     try {
-      final r = await runSwimflowDemoSeed();
+      final r = await runFullResetSeed();
       setState(() => _line = r);
-      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await Future<void>.delayed(const Duration(milliseconds: 800));
       exit(0);
     } catch (e, st) {
       debugPrintStack(stackTrace: st);
-      setState(() => _line = '$e');
-      await Future<void>.delayed(const Duration(milliseconds: 400));
+      setState(() => _line = 'ОШИБКА: $e');
+      await Future<void>.delayed(const Duration(milliseconds: 800));
       exit(1);
     }
   }
@@ -47,9 +47,9 @@ class _SeedAppState extends State<_SeedApp> {
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: SelectableText(_line, style: const TextStyle(fontSize: 14)),
+            child: SelectableText(_line, style: const TextStyle(fontSize: 14, fontFamily: 'monospace')),
           ),
         ),
       ),

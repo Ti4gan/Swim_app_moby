@@ -11,6 +11,7 @@ abstract final class FirestoreCollections {
   static const catalogExercises = 'catalog_exercises';
   static const rankNorms = 'rank_norms';
   static const workoutTemplatesSub = 'workout_templates';
+  static const trainingAnalysisSub = 'training_analysis';
 
   static String userPath(String uid) => '$users/$uid';
 
@@ -61,4 +62,10 @@ abstract final class FirestoreCollections {
     String coachUid,
   ) =>
       db.collection(users).doc(coachUid).collection(workoutTemplatesSub);
+
+  static CollectionReference<Map<String, dynamic>> userTrainingAnalysis(
+    FirebaseFirestore db,
+    String uid,
+  ) =>
+      db.collection(users).doc(uid).collection(trainingAnalysisSub);
 }

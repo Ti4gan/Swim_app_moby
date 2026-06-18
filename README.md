@@ -38,3 +38,12 @@ cd "E:\Другие компьютеры\MacBook Pro\AndroidStudioProjects\swim_
 flutter run -d edge --web-port=7357
 
 Если `npm` ругается на политику выполнения скриптов — используй `npm.cmd`, не `npm`.
+
+Прогресс (в процентах):
+(prevTime − currTime) / prevTime × 100.
+
+Улучшение (в секундах):
+(prevTime − currTime) / 100.
+
+Эффективность тренировки (в процентах):
+progressPercent / workoutsCount.
